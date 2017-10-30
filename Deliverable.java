@@ -2,33 +2,55 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.ArrayList;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+import java.util.concurrent.ExecutionException;
 
 public class Deliverable {
 
     public static HashMap<String, String> elems = new HashMap<String, String>(256);
     public static Pattern p = Pattern.compile("[^\\w]");
 
-    public static void main(String args[]) throws FileNotFoundException, IOException {
+    public static void main(String args[])  throws InterruptedException, ExecutionException {
         populateElems();
 
-        ArrayList<String> res = new ArrayList<String>();
-        BufferedReader br = new BufferedReader(new FileReader(args[0]));
-        try {
-            String line = br.readLine();
+        if (args.length != 1) {
+            System.out.println("Incorrect number of arguments. Please provide exactly one argument.");
+            return;
+        }
 
-            while (line != null) {
-                res.add(readLine(line));
-                line = br.readLine();
+        ExecutorService executor = Executors.newFixedThreadPool(4);
+        ArrayList<Future<String>> res = new ArrayList<Future<String>>();
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(args[0]));
+            try {
+                String line = br.readLine();
+
+                while (line != null) {
+                    // res.add(readLine(line));
+                    res.add(executor.submit(new ParseLine(line)));
+                    line = br.readLine();
+                }
+            } finally {
+                br.close();
             }
-        } finally {
-            br.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found.");
+        } catch (IOException e) {
+            System.out.println("Error reading file.");
         }
 
         // print results
-        for (String out : res) {
-            System.out.print(out);
+        for (Future<String> out : res) {
+            System.out.print(out.get());
         }
+        executor.shutdown();
     }
 
     public static String readLine(String line) {
@@ -64,7 +86,7 @@ public class Deliverable {
                 retL1.append(process.substring(i, i + 1));
                 retL2.append(elem);
                 i += 1;
-                continue;             
+                continue;
             }
 
             if (elem == null) {
@@ -201,4 +223,17 @@ public class Deliverable {
         elems.put("ZN", "Zinc");
         elems.put("ZR", "Zirconium");
     }
+
+    public static class ParseLine implements Callable<String> {
+        private final String line;
+
+        public ParseLine(String line) {
+            this.line = line;
+        }
+
+        public String call() {
+            return readLine(line);
+        }
+    }
 }
+
