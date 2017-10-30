@@ -36,7 +36,6 @@ public class Deliverable {
         StringBuilder retL1 = new StringBuilder(process.length() * 5);
         StringBuilder retL2 = new StringBuilder(process.length() * 20);
 
-        System.out.println("Process: " + process);
         if (process.length() == 0) {
             return "";
         }
@@ -48,7 +47,6 @@ public class Deliverable {
             elem = null;
 
             // single character element
-            System.out.println("1 char: " + process.substring(i, i + 1));
             elem = elems.get(process.substring(i, i + 1));
 
             if (!start) {
@@ -60,7 +58,6 @@ public class Deliverable {
 
             if (elem == null && i + 2 <= process.length()) {
                 // two character hashmap
-                System.out.println("2 chars: " + process.substring(i, i + 2));
                 elem = elems.get(process.substring(i, i + 2));
             } else {
                 // 1 character match found
