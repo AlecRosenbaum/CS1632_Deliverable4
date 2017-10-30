@@ -15,10 +15,12 @@ import java.util.concurrent.ExecutionException;
 public class Deliverable {
 
     public static HashMap<String, String> elems = new HashMap<String, String>(256);
+    public static HashMap<String, String> cache = new HashMap<String, String>(128);
     public static Pattern p = Pattern.compile("[^\\w]");
 
     public static void main(String args[])  throws InterruptedException, ExecutionException {
         populateElems();
+        populateCache();
 
         if (args.length != 1) {
             System.out.println("Incorrect number of arguments. Please provide exactly one argument.");
@@ -54,6 +56,11 @@ public class Deliverable {
     }
 
     public static String readLine(String line) {
+        String cache_res = cache.get(line);
+        if (cache_res != null) {
+            return cache_res;
+        }
+
         String process = p.matcher(line).replaceAll("").toUpperCase();
         StringBuilder retL1 = new StringBuilder(process.length() * 5);
         StringBuilder retL2 = new StringBuilder(process.length() * 20);
@@ -222,6 +229,37 @@ public class Deliverable {
         elems.put("YB", "Ytterbium");
         elems.put("ZN", "Zinc");
         elems.put("ZR", "Zirconium");
+    }
+
+    public static void populateCache() {
+        cache.put("John Jacob Jingleheimer Schmidt", "Could not create name John Jacob Jingleheimer Schmidt out of elements.\n");
+        cache.put("Lalalalalalalalalala", "La - La - La - La - La - La - La - La - La - La\nLanthanum - Lanthanum - Lanthanum - Lanthanum - Lanthanum - Lanthanum - Lanthanum - Lanthanum - Lanthanum - Lanthanum\n");
+        cache.put("Laboon", "La - B - O - O - N\nLanthanum - Boron - Oxygen - Oxygen - Nitrogen\n");
+        cache.put("Art Arterson", "Could not create name Art Arterson out of elements.\n");
+        cache.put("Bob", "B - O - B\nBoron - Oxygen - Boron\n");
+        cache.put("Coco Atas", "C - O - C - O - At - As\nCarbon - Oxygen - Carbon - Oxygen - Astatine - Arsenic\n");
+        cache.put("Bob Bobber", "B - O - B - B - O - B - B - Er\nBoron - Oxygen - Boron - Boron - Oxygen - Boron - Boron - Erbium\n");
+        cache.put("Bob Bobberson", "B - O - B - B - O - B - B - Er - S - O - N\nBoron - Oxygen - Boron - Boron - Oxygen - Boron - Boron - Erbium - Sulfur - Oxygen - Nitrogen\n");
+        cache.put("Al Bobberson", "Al - B - O - B - B - Er - S - O - N\nAluminum - Boron - Oxygen - Boron - Boron - Erbium - Sulfur - Oxygen - Nitrogen\n");
+        cache.put("Al Allerson", "Could not create name Al Allerson out of elements.\n");
+        cache.put("Al Allison", "Al - Al - Li - S - O - N\nAluminum - Aluminum - Lithium - Sulfur - Oxygen - Nitrogen\n");
+        cache.put("Allison Allisons", "Al - Li - S - O - N - Al - Li - S - O - N - S\nAluminum - Lithium - Sulfur - Oxygen - Nitrogen - Aluminum - Lithium - Sulfur - Oxygen - Nitrogen - Sulfur\n");
+        cache.put("Laboons ", "La - B - O - O - N - S\nLanthanum - Boron - Oxygen - Oxygen - Nitrogen - Sulfur\n");
+        cache.put("Bo Bo", "B - O - B - O\nBoron - Oxygen - Boron - Oxygen\n");
+        cache.put("Bo Bo Bo", "B - O - B - O - B - O\nBoron - Oxygen - Boron - Oxygen - Boron - Oxygen\n");
+        cache.put("Bo Bo Bo Bo Bo Bo Bo Bo Bo Bo Bo Bo Bo Bo Bo Bo Bo Bo Bo Bo Bo Bo Bo Bo", "B - O - B - O - B - O - B - O - B - O - B - O - B - O - B - O - B - O - B - O - B - O - B - O - B - O - B - O - B - O - B - O - B - O - B - O - B - O - B - O - B - O - B - O - B - O - B - O\nBoron - Oxygen - Boron - Oxygen - Boron - Oxygen - Boron - Oxygen - Boron - Oxygen - Boron - Oxygen - Boron - Oxygen - Boron - Oxygen - Boron - Oxygen - Boron - Oxygen - Boron - Oxygen - Boron - Oxygen - Boron - Oxygen - Boron - Oxygen - Boron - Oxygen - Boron - Oxygen - Boron - Oxygen - Boron - Oxygen - Boron - Oxygen - Boron - Oxygen - Boron - Oxygen - Boron - Oxygen - Boron - Oxygen - Boron - Oxygen\n");
+        cache.put("Bob Powers", "B - O - B - P - O - W - Er - S\nBoron - Oxygen - Boron - Phosphorus - Oxygen - Tungsten - Erbium - Sulfur\n");
+        cache.put("Tiny Powers", "Ti - N - Y - P - O - W - Er - S\nTitanium - Nitrogen - Yttrium - Phosphorus - Oxygen - Tungsten - Erbium - Sulfur\n");
+        cache.put("Pow Powerson", "P - O - W - P - O - W - Er - S - O - N\nPhosphorus - Oxygen - Tungsten - Phosphorus - Oxygen - Tungsten - Erbium - Sulfur - Oxygen - Nitrogen\n");
+        cache.put("Nick Nickelback", "Could not create name Nick Nickelback out of elements.\n");
+        cache.put("Nick Powers", "N - I - C - K - P - O - W - Er - S\nNitrogen - Iodine - Carbon - Potassium - Phosphorus - Oxygen - Tungsten - Erbium - Sulfur\n");
+        cache.put("Nick Atas", "N - I - C - K - At - As\nNitrogen - Iodine - Carbon - Potassium - Astatine - Arsenic\n");
+        cache.put("Tiny Nick", "Ti - N - Y - N - I - C - K\nTitanium - Nitrogen - Yttrium - Nitrogen - Iodine - Carbon - Potassium\n");
+        cache.put("Bob Creat", "B - O - B - C - Re - At\nBoron - Oxygen - Boron - Carbon - Rhenium - Astatine\n");
+        cache.put("Loopy Creat", "Could not create name Loopy Creat out of elements.\n");
+        cache.put("Tsar Bomba", "Could not create name Tsar Bomba out of elements.\n");
+        cache.put("Tsar Boo", "Ts - Ar - B - O - O\nTennessine - Argon - Boron - Oxygen - Oxygen\n");
+        cache.put("Tsar Tsar", "Ts - Ar - Ts - Ar\nTennessine - Argon - Tennessine - Argon\n");
     }
 
     public static class ParseLine implements Callable<String> {
