@@ -47,42 +47,37 @@ public class Deliverable {
         while (i < process.length()) {
             elem = null;
 
-            if (i + 2 <= process.length()) {
+            // single character element
+            System.out.println("1 char: " + process.substring(i, i + 1));
+            elem = elems.get(process.substring(i, i + 1));
+
+            if (!start) {
+                retL1.append(" - ");
+                retL2.append(" - ");
+            } else {
+                start = false;
+            }
+
+            if (elem == null && i + 2 <= process.length()) {
                 // two character hashmap
                 System.out.println("2 chars: " + process.substring(i, i + 2));
                 elem = elems.get(process.substring(i, i + 2));
-            }
-
-            if (elem == null) {
-                // single character element
-                System.out.println("1 char: " + process.substring(i, i + 1));
-                elem = elems.get(process.substring(i, i + 1));
-
-                if (!start) {
-                    retL1.append(" - ");
-                    retL2.append(" - ");
-                } else {
-                    start = false;
-                }
+            } else {
+                // 1 character match found
                 retL1.append(process.substring(i, i + 1));
                 retL2.append(elem);
                 i += 1;
-            } else {
-                // two character string found
-                if (!start) {
-                    retL1.append(" - ");
-                    retL2.append(" - ");
-                } else {
-                    start = false;
-                }
-                retL1.append(process.substring(i, i + 1).toUpperCase() + process.substring(i + 1, i + 2).toLowerCase());
-                retL2.append(elem);
-                i += 2;
+                continue;             
             }
 
             if (elem == null) {
-                // neither found, string can't be parsed
+                // neither match found, string can't be parsed
                 return "Could not create name " + line + " out of elements.\n";
+            } else {
+                // two character match found
+                retL1.append(process.substring(i, i + 1).toUpperCase() + process.substring(i + 1, i + 2).toLowerCase());
+                retL2.append(elem);
+                i += 2;
             }
         }
 
