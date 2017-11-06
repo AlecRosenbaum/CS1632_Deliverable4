@@ -14,7 +14,7 @@ import java.util.concurrent.ExecutionException;
 
 public class Deliverable {
 
-    public static HashMap<String, String> elems = new HashMap<String, String>(256);
+    public static HashMap<String, String> elems = new HashMap<String, String>(512);
     public static HashMap<String, String> cache = new HashMap<String, String>(128);
     public static Pattern p = Pattern.compile("[^\\w]");
 
@@ -27,15 +27,14 @@ public class Deliverable {
             return;
         }
 
-        ExecutorService executor = Executors.newFixedThreadPool(4);
-        ArrayList<Future<String>> res = new ArrayList<Future<String>>();
+        ExecutorService executor = Executors.newFixedThreadPool(1);
+        ArrayList<Future<String>> res = new ArrayList<Future<String>>(64);
         try {
-            BufferedReader br = new BufferedReader(new FileReader(args[0]));
+            BufferedReader br = new BufferedReader(new FileReader(args[0]), 512);
             try {
                 String line = br.readLine();
 
                 while (line != null) {
-                    // res.add(readLine(line));
                     res.add(executor.submit(new ParseLine(line)));
                     line = br.readLine();
                 }
@@ -49,10 +48,13 @@ public class Deliverable {
         }
 
         // print results
+        StringBuilder printOut = new StringBuilder();
         for (Future<String> out : res) {
-            System.out.print(out.get());
+            printOut.append(out.get());
         }
         executor.shutdown();
+
+        System.out.print(printOut.toString());
     }
 
     public static String readLine(String line) {
