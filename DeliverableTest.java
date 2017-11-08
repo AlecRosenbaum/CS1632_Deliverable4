@@ -2,6 +2,12 @@ import static org.junit.Assert.*;
 import java.util.HashMap;
 import java.util.*;
 import org.junit.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.contrib.java.lang.system.SystemOutRule;
 
 public class DeliverableTest {
 
@@ -18,26 +24,29 @@ public class DeliverableTest {
         assertNotNull(_del);
     }
 
+    //This allows us to read directly from console
+    @Rule
+    public final SystemOutRule systemOutRule = new SystemOutRule().enableLog();
 
-    //Check and make sure that our base cache populated
+    //Check and make sure that our base cache populated with test name John Jacob Jingleheimer Schmidt
     @Test
     public void testCache_000() {
         _del.populateCache();
         assertEquals("Could not create name John Jacob Jingleheimer Schmidt out of elements.\n", _del.cache.get("John Jacob Jingleheimer Schmidt"));
     }
-    //Check and make sure that our base cache populated
+    //Check and make sure that our base cache populated with test name Tsar Tsar
     @Test
     public void testCache_001() {
         _del.populateCache();
         assertEquals("Ts - Ar - Ts - Ar\nTennessine - Argon - Tennessine - Argon\n", _del.cache.get("Tsar Tsar"));
     }
-    //Check and make sure that our base cache populated
+    //Check and make sure that our base cache populated with test name Laboons
     @Test
     public void testCache_002() {
         _del.populateCache();
         assertEquals("La - B - O - O - N - S\nLanthanum - Boron - Oxygen - Oxygen - Nitrogen - Sulfur\n", _del.cache.get("Laboons "));
     }
-    //Check and make sure that our base cache populated
+    //Check and make sure that our base cache populated with test name Nick Nickelback
     @Test
     public void testCache_003() {
         _del.populateCache();
@@ -222,25 +231,25 @@ public class DeliverableTest {
         }
     }
 
-    //Check and make sure the logic for converting is working WITHOUT THE CACHE
+    //Check and make sure the logic for converting is working WITHOUT THE CACHE with text Nick Nickelback
     @Test
     public void testConvert_000() {
         _del.populateElems();
         assertEquals("Could not create name Nick Nickelback out of elements.\n", _del.readLine("Nick Nickelback"));
     }
-    //Check and make sure the logic for converting is working WITHOUT THE CACHE
+    //Check and make sure the logic for converting is working WITHOUT THE CACHE with text Tsar Tsar
     @Test
     public void testConvert_001() {
         _del.populateElems();
         assertEquals("Ts - Ar - Ts - Ar\nTennessine - Argon - Tennessine - Argon\n", _del.readLine("Tsar Tsar"));
     }
-    //Check and make sure the logic for converting is working WITHOUT THE CACHE
+    //Check and make sure the logic for converting is working WITHOUT THE CACHE with text Allison Allisons
     @Test
     public void testConvert_002() {
         _del.populateElems();
         assertEquals("Al - Li - S - O - N - Al - Li - S - O - N - S\nAluminum - Lithium - Sulfur - Oxygen - Nitrogen - Aluminum - Lithium - Sulfur - Oxygen - Nitrogen - Sulfur\n", _del.readLine("Allison Allisons"));
     }
-    //Check and make sure the logic for converting is working WITHOUT THE CACHE
+    //Check and make sure the logic for converting is working WITHOUT THE CACHE with text BOB BOBBERSON
     @Test
     public void testConvert_003() {
         _del.populateElems();
@@ -336,5 +345,45 @@ public class DeliverableTest {
         }
     }
 
+    //Test and make sure the main function will return an error if no args are passed in
+    @Test
+    public void testMain_000()throws InterruptedException, ExecutionException {
+        _del.main(new String[] {});
+        assertEquals("Incorrect number of arguments. Please provide exactly one argument.\n", systemOutRule.getLog());
+    }
 
+    //Test and make sure that the main function will catch a file not found exception
+    @Test
+    public void testMain_001()throws InterruptedException, ExecutionException {
+        _del.main(new String[] {""});
+        assertEquals("File not found.\n", systemOutRule.getLog());
+    }
+
+    //Test and make sure that an empty file will be processes and not error
+    @Test
+    public void testMain_002()throws InterruptedException, ExecutionException {
+        _del.main(new String[] {"empty.txt"});
+        assertEquals("", systemOutRule.getLog());
+    }
+
+    //Test and make sure that test file lala.txt works as expected
+    @Test
+    public void testMain_003()throws InterruptedException, ExecutionException {
+        _del.main(new String[] {"sample_files/lala.txt"});
+        assertEquals("La - La - Mc - B - O - O\nLanthanum - Lanthanum - Moscovium - Boron - Oxygen - Oxygen\nLa - La - Ra\nLanthanum - Lanthanum - Radium\n", systemOutRule.getLog());
+    }
+
+    //Test and make sure that test file noogie.txt works as expected
+    @Test
+    public void testMain_004()throws InterruptedException, ExecutionException {
+        _del.main(new String[] {"sample_files/noogie.txt"});
+        assertEquals("La - B - O - O - N\nLanthanum - Boron - Oxygen - Oxygen - Nitrogen\nLa - B - O - O - N\nLanthanum - Boron - Oxygen - Oxygen - Nitrogen\nAl - Li - S - O - N\nAluminum - Lithium - Sulfur - Oxygen - Nitrogen\nB - O - O\nBoron - Oxygen - Oxygen\nCould not create name Bill out of elements.\n", systemOutRule.getLog());
+    }
+
+    //Test and make sure that test file tsars.txt works as expected
+    @Test
+    public void testMain_005()throws InterruptedException, ExecutionException {
+        _del.main(new String[] {"sample_files/tsars.txt"});
+        assertEquals("Could not create name Tsar Meow out of elements.\nTs - Ar - Ra\nTennessine - Argon - Radium\nTs - Ar - N - I - C - H - O - La - S\nTennessine - Argon - Nitrogen - Iodine - Carbon - Hydrogen - Oxygen - Lanthanum - Sulfur\n", systemOutRule.getLog());
+    }
 }
